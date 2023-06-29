@@ -8,13 +8,24 @@ def hello():
     return "hello world"
 
 @app.route('/art')
-def art():
-    pathtext = open(os.path.join(sys.path[0], "path.txt"), "r")
-    paths = pathtext.readlines()
-    folder = glob.glob(os.path.join(paths[0].rstrip(), "*"))
-    num = random.randint(0, len(folder))
-    file = folder[num]
-    return send_file(file)
+@app.route('/art/<int:index>')
+def art(index = None):
+    if index is None:
+        pathtext = open(os.path.join(sys.path[0], "path.txt"), "r")
+        paths = pathtext.readlines()
+        folder = glob.glob(os.path.join(paths[0].rstrip(), "*"))
+        num = random.randint(0, len(folder)-1)
+        file = folder[num]
+        return send_file(file)
+    else:
+        pathtext = open(os.path.join(sys.path[0], "path.txt"), "r")
+        paths = pathtext.readlines()
+        folder = glob.glob(os.path.join(paths[0].rstrip(), "*"))
+        if index > len(folder)-1:
+            raise IndexError
+        else:
+            file = folder[index]
+            return send_file(file)
 
 def checkReg(discID: int):
     pathtext = open(os.path.join(sys.path[0], "path.txt"), "r")
