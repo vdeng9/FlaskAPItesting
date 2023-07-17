@@ -1,11 +1,11 @@
-from flask import Flask, send_file, jsonify
+from flask import Flask, send_file, jsonify, render_template
 import os, sys, glob, random, sqlite3
 
 app = Flask(__name__)
 
 @app.route('/')
 def hello():
-    return "hello world"
+    return render_template("home.html")
 
 @app.route('/art')
 @app.route('/art/<int:index>')
@@ -51,9 +51,9 @@ def eco(id=None):
         if os.path.exists(os.path.join(paths[1], "econ.db")):
                 conn = sqlite3.connect(os.path.join(paths[1], "econ.db"))
                 cursor = conn.cursor()
-                cursor.execute(f'''SELECT id FROM economy''')
+                cursor.execute(f'''SELECT id FROM economy ORDER BY id''')
                 idresult = cursor.fetchall()
-                cursor.execute(f'''SELECT pekos FROM economy''')
+                cursor.execute(f'''SELECT pekos FROM economy ORDER BY id''')
                 pekosresult = cursor.fetchall()
                 return jsonify({"ID": idresult, "Pekos": pekosresult}) # this technically does what I want but it could be done better LOL
     else:
@@ -72,4 +72,4 @@ def eco(id=None):
             return jsonify({"response": "Not registered"})
         
 
-app.run(debug=True)
+app.run(debug=True, host="0.0.0.0")
